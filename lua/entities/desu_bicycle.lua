@@ -47,7 +47,7 @@ if CLIENT then
 
     ENT.StartSound = ""
     ENT.StoppedSound = ""
-    ENT.HornSound = "glide/horns/ding.wav"
+    ENT.HornSound = "glide/horns/ding.mp3"
 
     function ENT:OnCreateEngineStream( stream )
         stream.offset = Vector( 5, 0, 0 )
