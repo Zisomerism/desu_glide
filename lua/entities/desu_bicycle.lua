@@ -7,13 +7,40 @@ ENT.PrintName = "Bicycle"
 ENT.GlideCategory = "Desu's Glide Stuff"
 ENT.ChassisModel = "models/props_bikes/bike_frame.mdl"
 
+ENT.MaxChassisHealth = 10000
+
 DEFINE_BASECLASS( "base_glide_motorcycle" )
 local Abs = math.abs
 local Clamp = math.Clamp
 
-function ENT:GetFirstPersonOffset( _, localEyePos )
+    function ENT:GetFirstPersonOffset( seatIndex, localEyePos )
+        if seatIndex == TURRET_SEAT_INDEX then
+            return Vector( -30, 0, 115 )
+        end
+
+        localEyePos[1] = localEyePos[1] + 5
+        localEyePos[3] = localEyePos[3] + 10
+
+        return localEyePos
+    end
+
+function ENT:GetFirstPersonOffset( seatIndex, localEyePos )
+    if seatIndex == 1 then
+        localEyePos[1] = localEyePos[1] + 18
+        localEyePos[3] = localEyePos[3] - 15
+    else
+        localEyePos[1] = localEyePos[1] - 8
+        localEyePos[3] = localEyePos[3] + 10
+    end
     return localEyePos
 end
+
+ENT.UneditableNWVars = {
+    WheelRadius = false,
+    SuspensionLength = false,
+    PowerDistribution = false,
+    ForwardTractionBias = false
+}
 
 if CLIENT then
     ENT.CameraOffset = Vector( -170, 0, 50 )
@@ -73,6 +100,8 @@ if CLIENT then
         ["ValveBiped.Bip01_Pelvis"] = Angle( 0, 0, 20 ),
         ["ValveBiped.Bip01_Spine"] = Angle( 0, 30, 0 ),
         ["ValveBiped.Bip01_Spine1"] = Angle( 0, 20, 0 ),
+        ["ValveBiped.Bip01_Neck1"] = Angle( 0, 20, 0 ),
+        ["ValveBiped.Bip01_Head1"] = Angle( 0, 20, 0 ),
 
         ["ValveBiped.Bip01_L_UpperArm"] = Angle( -40, -30, 0 ),
         ["ValveBiped.Bip01_R_UpperArm"] = Angle( 30, -40, 0 ),
@@ -102,20 +131,19 @@ if CLIENT then
 
         local decay = 5
         local dt = FrameTime()
-        local resting = false
+        local resting = self.velBoneMod < 20
+        local thigh = DRIVER_POSE_DATA["ValveBiped.Bip01_R_Thigh"]
+        local calf = DRIVER_POSE_DATA["ValveBiped.Bip01_R_Calf"]
+        local foot = DRIVER_POSE_DATA["ValveBiped.Bip01_R_Foot"]
 
-        local thigh = DRIVER_POSE_DATA["ValveBiped.Bip01_L_Thigh"]
-        local calf = DRIVER_POSE_DATA["ValveBiped.Bip01_L_Calf"]
-        local foot = DRIVER_POSE_DATA["ValveBiped.Bip01_L_Foot"]
+        thigh[1] = ExpDecayAngle( thigh[1], resting and 10 or 10, decay, dt )
+        thigh[2] = ExpDecayAngle( thigh[2], resting and 50 or 20, decay, dt )
+        thigh[3] = ExpDecayAngle( thigh[3], resting and 0 or 0, decay, dt )
 
-        --[[thigh[1] = ExpDecayAngle( thigh[1], resting and -25 or -3, decay, dt )
-        thigh[2] = ExpDecayAngle( thigh[2], resting and 15 or 2, decay, dt )
-        thigh[3] = ExpDecayAngle( thigh[3], resting and -5 or 0, decay, dt )
+        calf[1] = ExpDecayAngle( calf[1], resting and 0 or 0, decay, dt )
+        calf[2] = ExpDecayAngle( calf[2], resting and -30 or 0, decay, dt )
 
-        calf[1] = ExpDecayAngle( calf[1], resting and -3 or -1, decay, dt )
-        calf[2] = ExpDecayAngle( calf[2], resting and 3 or 7, decay, dt )
-
-        foot[2] = ExpDecayAngle( foot[2], resting and 0 or -35, decay, dt )]]
+        foot[2] = ExpDecayAngle( foot[2], resting and 40 or 0, decay, dt )
 
         return DRIVER_POSE_DATA
     end
@@ -176,13 +204,13 @@ if SERVER then
         self:CreateSeat( Vector( -26, 0, 23 ), Angle( 0, 270, -5 ), Vector( 0, -60, 0 ), true )
 
         -- Front
-        self:CreateWheel( Vector( 23, 0, 33 ), {
+        self:CreateWheel( Vector( 23, 0, 32 ), {
             steerMultiplier = 1,
             disableSounds = true
         } )
 
         -- Rear
-        self:CreateWheel( Vector( -21, 0, 33 ), {
+        self:CreateWheel( Vector( -21, 0, 32 ), {
             steerMultiplier = -0.1
         } )
 
@@ -271,7 +299,7 @@ if SERVER then
 
         if leanForward and isAnyWheelGrounded and CurTime() > self.LastBhop + 1 then
 
-            local strength  = 1 * Clamp( self.totalSpeed / 500, 0.1, 1 )
+            local strength  = 1 * Clamp( self.totalSpeed / 100, 0.1, 1 )
 
             local massPos = phys:GetMassCenter()
             local l, _ = phys:CalculateForceOffset( self:GetUp() * mass * strength * 10000, massPos )
