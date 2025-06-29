@@ -1,0 +1,28 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\props_bikes\bike_color_paint"
+	"$bumpmap" "models\props_bikes\bike_normal"
+
+	"$detail" "models\props_bikes\bike_ao"
+	"$detailscale"	"1"
+	"$detailblendfactor"	"0.6"
+
+	$normalmapalphaenvmapmask 1 	
+
+	"$phong" "1"						
+	"$phongboost"	"0.05" 		
+
+	"$phongfresnelranges"	"[1 1.05 1.25]"				
+	"$PhongAlbedoTint" "1"
+
+	"$blendtintbybasealpha" "1" 
+	"$blendtintcoloroverbase" "0"
+proxies
+{
+playercolor
+{
+resultVar	$color2
+default 0.75 0.75 0.75
+}
+}
+}

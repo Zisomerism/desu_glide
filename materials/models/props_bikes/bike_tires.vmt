@@ -1,0 +1,19 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\props_bikes\bike_color"
+	"$bumpmap" "models\props_bikes\bike_normal"
+
+	"$detail" "models\props_bikes\bike_ao"
+	"$detailscale"	"1"
+	"$detailblendfactor"	"0.6"
+
+	$normalmapalphaenvmapmask 1 	
+
+	"$phong" "1"						
+	"$phongboost"	"0.01" 		
+	"$phongexponenttexture" "models\props_bikes\bike_metalness"		
+	"$phongwarptexture"		"models\props_bikes\bike_metalness"		
+
+	"$phongfresnelranges"	"[1 1.05 1.25]"				
+	"$PhongAlbedoTint" "1"
+}
