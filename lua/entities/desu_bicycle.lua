@@ -242,6 +242,16 @@ if SERVER then
         }
     end
 
+    function ENT:SwitchGear( index, cooldown )
+        if self:GetGear() == index then return end
+
+        index = Clamp( index, self.minGear, self.maxGear )
+
+        self.switchCD = cooldown or ( index == 1 and 0 or ( self:GetFastTransmission() and 0 or 0.2 ) )
+        self.clutch = 1
+        self:SetGear( index )
+    end
+
     function ENT:GetYawDragMultiplier()
         return 0.25
     end
