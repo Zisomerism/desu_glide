@@ -1,0 +1,19 @@
+{
+  "kv": {
+    "volume": 0.5,
+    "fadeDist": 1200.0,
+    "redlineFrequency": 50.0
+  },
+  "layers": {
+    "throttle_mid": {
+      "path": "snds_jack_gmod/slow_ratchet.wav",
+      "controllers": [
+        ["rpmFraction", 0.1, 1.0, "volume", 0.0, 1.0],
+        ["rpmFraction", 0.1, 1.0, "pitch", 0.8, 2.0],
+        ["throttle", 0.0, 1.0, "volume", 1.0, 0.0]
+      ],
+      "wobbleTime": 2.0,
+      "redline": false
+    }
+  }
+}
