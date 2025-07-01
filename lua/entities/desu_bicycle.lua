@@ -14,7 +14,7 @@ local Abs = math.abs
 local Clamp = math.Clamp
 
     function ENT:GetFirstPersonOffset( seatIndex, localEyePos )
-        if seatIndex == TURRET_SEAT_INDEX then
+        if seatIndex == 2 then
             return Vector( -30, 0, 115 )
         end
 
